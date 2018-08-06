@@ -1,0 +1,17 @@
+.grid {
+  margin: 20px;
+  height: 50vh;
+  display: grid;
+  grid-template-columns: 1 1 1;
+  grid-template-rows: 1 1;
+
+  grid-template-areas: "tama-display tama-display tama-stats"
+                       "tama-actions tama-actions tama-actions"
+
+}
+.grid div { outline: 1px solid gray; }
+.tama-display { grid-area: tama-display; }
+.tama-stats { grid-area: tama-stats; }
+.tama-actions { grid-area: tama-actions; }
+
+.tama-actions .container-fluid, .row { height: 100%; }
