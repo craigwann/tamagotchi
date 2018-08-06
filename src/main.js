@@ -8,6 +8,22 @@ var timeElapse = function(resting = false) {
   let happiness = $(".happiness").text();
   let energy = $(".energy").text();
 
+  if (hunger <= 175 || happiness <= 175 || energy <= 175) {
+    $(".status").text("🙂");
+  }
+  if (hunger <= 150 || happiness <= 150 || energy <= 150) {
+    $(".status").text("🙂");
+  }
+  if (hunger <= 100 || happiness <= 100 || energy <= 100) {
+    $(".status").text("😐");
+  }
+  if (hunger <= 75 || happiness <= 75 || energy <= 75) {
+    $(".status").text("😕");
+  }
+  if (hunger <= 50 || happiness <= 50 || energy <= 50) {
+    $(".status").text("😢");
+  }
+
   if (hunger <= 0 || happiness <= 0 || energy <= 0) {
     clearInterval(interval);
     $(".tama-actions button").attr("disabled", true);
@@ -72,7 +88,7 @@ $(document).ready(function() {
 
   })
   $(".res").click(function() {
-    $(".hunger, .happiness, .energy").text("100");
+    $(".hunger, .happiness, .energy").text("200");
     clearInterval(interval);
     interval = setInterval(function(){ timeElapse(); }, 500);
     $(".tama-actions button").attr("disabled", false);

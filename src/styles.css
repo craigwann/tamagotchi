@@ -20,4 +20,14 @@
 
 .status {
   font-size: 120px;
+  text-align: center;
+}
+
+.tama-display h1:hover {
+  animation: waho 1s infinite;
+}
+
+@keyframes waho {
+  0% { transform: rotateZ(0deg); }
+  100% { transform: rotateZ(360deg); }
 }
