@@ -3,11 +3,16 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
-var timeElapse = function(resting = false) {
-  let hunger = $(".hunger").text();
-  let happiness = $(".happiness").text();
-  let energy = $(".energy").text();
+import { Tamagotchi } from './tamagotchi';
 
+var timeTick = function(object) {
+  let hunger = object.hunger; $(".hunger").text(object.hunger);
+  let happiness = object.happiness; $(".happiness").text(object.happiness);
+  let energy = object.energy; $(".energy").text(object.energy);
+
+  if (hunger <= 200 || happiness <= 200 || energy <= 200) {
+    $(".status").text("😀");
+  }
   if (hunger <= 175 || happiness <= 175 || energy <= 175) {
     $(".status").text("🙂");
   }
@@ -23,76 +28,90 @@ var timeElapse = function(resting = false) {
   if (hunger <= 50 || happiness <= 50 || energy <= 50) {
     $(".status").text("😢");
   }
-
   if (hunger <= 0 || happiness <= 0 || energy <= 0) {
-    clearInterval(interval);
-    $(".tama-actions button").attr("disabled", true);
-    setTimeout(function() { $(".tama-actions button").attr("disabled", true); }, 2000);
     $(".status").text("😵");
-    clearTimeout(one);
-    clearTimeout(two);
-    clearTimeout(three);
+    $("button").attr("disabled", true);
+    $(".res").attr("disabled", false);
+    clearTimeout(timeout);
   }
-  else {
-    let decay = 10;
-    if (resting) {
-      decay = decay / 2;
-    }
-    hunger-= decay; $(".hunger").text(hunger);
-    happiness-= decay; $(".happiness").text(happiness);
-    energy-= decay; $(".energy").text(energy);
+};
+
+var timeout;
+
+var buttonDisable = function(button) {
+  button.attr("disabled", true);
+  timeout = setTimeout( function() { button.attr("disabled", false); }, 2000);
+
+  if (button.hasClass("rest")) {
+    $(".feed, .play").attr("disabled", true);
+    timeout = setTimeout( function() { $(".feed, .play").attr("disabled", false); }, 2000);
   }
-}
-
-var randomNum = function() {
-  let rand = Math.floor(Math.random() * 10) + 1;
-  return rand;
-}
-
-var interval = setInterval(function(){ timeElapse(); }, 500);
-var one, two, three; // placeholder identity for each setTimeout
+};
 
 $(document).ready(function() {
 
-  $(".feed").click(function(){
-    let food = parseInt($(".hunger").text());
-    food += 10;
-    $(".hunger").text(food);
-    $(this).attr("disabled", true);
-    one = setTimeout(
-      () => { $(this).attr("disabled", false); }
-      , 2000
-    );
-  })
-  $(".play").click(function(){
-    let play = parseInt($(".happiness").text());
-    play += 10;
-    $(".happiness").text(play);
-    $(this).attr("disabled", true);
-    two = setTimeout(
-      () => { $(this).attr("disabled", false); }
-      , 2000
-    );
-  })
-  $(".rest").click(function(){
-    let energy = parseInt($(".energy").text());
-    energy += 30;
-    $(".energy").text(energy);
-    clearInterval(interval);
-    interval = setInterval(function(){ timeElapse(true); }, 500);
-    $(this).attr("disabled", true);
-    three = setTimeout(
-      () => { $(this).attr("disabled", false); }
-      , 5000
-    );
+  let tama = new Tamagotchi("tama");
+  tama.timeElapse();
+  $(".tama-name").text(tama.name);
+  setInterval(() => { timeTick(tama); }, 500);
 
-  })
+  $(".feed").click(function() {
+    tama.feed();
+    buttonDisable($(this));
+  });
+
+  $(".play").click(function() {
+    tama.play();
+    buttonDisable($(this));
+  });
+
+  $(".rest").click(function() {
+    tama.rest();
+    buttonDisable($(this));
+  });
+
   $(".res").click(function() {
-    $(".hunger, .happiness, .energy").text("200");
-    clearInterval(interval);
-    interval = setInterval(function(){ timeElapse(); }, 500);
-    $(".tama-actions button").attr("disabled", false);
-    $(".status").text("😀");
-  })
+    tama.res();
+    $("button").attr("disabled", false);
+    $(this).attr("disabled", true);
+  });
+
+  $.ajax({
+    url: `http://api.openweathermap.org/data/2.5/weather?q=portland&appid=${process.env.API_KEY}`,
+    type: 'GET',
+    data: {
+      format: 'json'
+    },
+    success: function(response) {
+      console.log(`The humidity in portland is ${response.main.humidity}%`);
+      console.log(`The temperature in Kelvins is ${response.main.temp}.`);
+    },
+    error: function() {
+      console.log("There was an error processing your request. Please try again.");
+    }
+  });
+
+  $(".square").each(function(o) {
+    setTimeout(() => {
+      let that = $(this);
+          that.html(o);
+    }, 80 * o);
+  });
+
+  $(".square").click(function() {
+    $(this).addClass("infect");
+  });
+  $.ajax({
+    // url: `api.giphy.com/v1/gifs/random?q=portland&appid=${process.env.API_KEY}`,
+    url: `https://api.giphy.com/v1/gifs/random?api_key=${process.env.giphy_API_KEY}&tag=pokemon&rating=R&fmt=json`,
+    type: 'GET',
+    success: function(response) {
+      $(".giphy").html(`<img src="${response.data.images.fixed_width_small.url}">` )
+    },
+    error: function() {
+      console.log("There was an error processing your request. Please try again.");
+    }
+  });
+
 
 });

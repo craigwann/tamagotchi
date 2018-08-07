@@ -2,7 +2,7 @@ const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: './src/main.js',
@@ -15,6 +15,7 @@ module.exports = {
     contentBase: './dist'
   },
   plugins: [
+    new Dotenv(),
     new UglifyJsPlugin({ sourceMap: true }),
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
@@ -22,8 +23,8 @@ module.exports = {
       template: './src/index.html'
     }),
     new HtmlWebpackPlugin({
-      filename: 'test.html',
-      template: './src/test.html'
+      filename: 'weather.html',
+      template: './src/weather.html'
     }),
   ],
   module: {
@@ -48,11 +49,6 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        exclude: /node_modules/,
-        loader: "eslint-loader"
-      },
-      {
-        test: /\.js$/,
         exclude: [
           /node_modules/,
           /spec/
@@ -61,6 +57,14 @@ module.exports = {
         options: {
           presets: ['es2015']
         }
+      },
+      {
+        test: /\.js$/,
+        exclude: [
+          /node_modules/,
+          /spec/
+        ],
+        loader: "eslint-loader"
       }
     ]
   }
