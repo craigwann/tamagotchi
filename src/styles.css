@@ -60,3 +60,11 @@
   background-color: rgba(255, 0, 0, .5) !important;
 
 }
+
+.giphy {
+    padding-left: 25px;
+}
+
+.weather {
+    padding: 18px;
+}

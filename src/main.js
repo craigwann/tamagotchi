@@ -83,8 +83,20 @@ $(document).ready(function() {
       format: 'json'
     },
     success: function(response) {
-      console.log(`The humidity in portland is ${response.main.humidity}%`);
-      console.log(`The temperature in Kelvins is ${response.main.temp}.`);
+      let fahrenheit = (Math.round(((response.main.temp)-273.15)*1.8)+32);
+      $(".weather").append(`<p>The humidity in portland is <strong> ${response.main.humidity}% </strong></p>`);
+      $(".weather").append(`<p>The temperature in Kelvins is <strong> ${response.main.temp}.</strong> </p>`);
+      $(".weather").append(`<p>The temperature in Fahrenheit is <strong> ${fahrenheit}.</strong> </p>`);
+      if (fahrenheit > 80) {
+        $(".card-title").text(`☀️`);
+      }
+      if (fahrenheit < 80 && fahrenheit > 70) {
+        $(".card-title").text(`🌤`);
+      }
+
+
+
+
     },
     error: function() {
       console.log("There was an error processing your request. Please try again.");
