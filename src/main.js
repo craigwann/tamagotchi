@@ -93,10 +93,6 @@ $(document).ready(function() {
       if (fahrenheit < 80 && fahrenheit > 70) {
         $(".card-title").text(`🌤`);
       }
-
-
-
-
     },
     error: function() {
       console.log("There was an error processing your request. Please try again.");
